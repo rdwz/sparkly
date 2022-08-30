@@ -1,42 +1,24 @@
-import { useState } from 'react'
-import { Button, Input } from 'react-daisyui'
-import { trpc } from '../lib/trpc'
-
+import { useAuth } from '../atoms/auth-atom'
+import { LoginForm } from '../components/login-form'
+import { TaskForm } from '../components/task-form'
+import { TasksTable } from '../components/tasks-table'
 export const Home = () => {
-  const [email, setEmail] = useState('')
-  const loginMutation = trpc.useMutation(['users.login'])
-  const getUsersQuery = trpc.useQuery(['users.list'])
+  useAuth()
 
   return (
-    <main className='container mx-auto grid grid-cols-1 gap-2'>
+    <main className='container mx-auto grid grid-cols-1 gap-2 pr-1 pl-1'>
       <h1 className='text-center text-2xl'>Fastify - React</h1>
 
       <div className='flex'>
         <div className='flex-1'>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-
-              loginMutation.mutateAsync(email).then((data) => {
-                console.log(data.token)
-              })
-            }}
-          >
-            <Input
-              value={email}
-              type='email'
-              placeholder='Type your email'
-              onChange={(e) => {
-                setEmail(e.target.value)
-              }}
-            />
-            <Button>Login</Button>
-          </form>
+          <LoginForm />
         </div>
         <div className='flex-1'>
-          {JSON.stringify(getUsersQuery?.data, null, 2)}
+          <form></form>
         </div>
       </div>
+      <TaskForm />
+      <TasksTable />
     </main>
   )
 }

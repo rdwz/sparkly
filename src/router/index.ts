@@ -1,5 +1,14 @@
 import { createRouter } from '../lib/create-router.js'
-import { usersRouter } from './user-routes.js'
+import { taskRouter } from './task-router.js'
+import { userRouter } from './user-router.js'
+export const router = createRouter()
+  // .transformer(superjson)
+  .query('health', {
+    async resolve() {
+      return 'yay!'
+    },
+  })
+  .merge('user.', userRouter)
+  .merge('task.', taskRouter)
 
-export const router = createRouter().merge('user.', usersRouter)
 export type Router = typeof router

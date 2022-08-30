@@ -1,13 +1,12 @@
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { trpc } from '../lib/trpc'
+import { useTrpc } from '../lib/use-trpc'
 import { Home } from '../pages/home'
 
 const queryClient = new QueryClient()
-const trpcClient = trpc.createClient({
-  url: `${import.meta.env.VITE_SERVER_URL}/trpc`,
-})
 
 export const App = () => {
+  const trpcClient = useTrpc()
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
