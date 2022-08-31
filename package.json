@@ -5,6 +5,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
+    "build": "tsc",
     "clean": "del dist",
     "dev": "npm run clean && nodemon src/index.ts",
     "test": "vitest",
