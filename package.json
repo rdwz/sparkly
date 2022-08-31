@@ -6,8 +6,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "npm run clean && tsc",
-    "clean": "npx del dist",
-    "dev": "npm run clean && nodemon src/index.ts",
+    "clean": "del dist",
+    "dev": "nodemon src/index.ts",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
@@ -47,7 +47,8 @@
     "ts-node": "^10.9.1",
     "typescript": "^4.8.2",
     "vite": "^3.0.9",
-    "zod": "^3.18.0"
+    "zod": "^3.18.0",
+    "del-cli": "^5.0.0"
   },
   "devDependencies": {
     "@testing-library/react": "^13.3.0",
@@ -56,7 +57,6 @@
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "autoprefixer": "^10.4.8",
-    "del-cli": "^5.0.0",
     "postcss": "^8.4.16",
     "prisma": "^4.2.1",
     "tailwindcss": "^3.1.8",
