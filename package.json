@@ -12,7 +12,10 @@
   },
   "keywords": [],
   "author": "Giacomo Rebonato",
-  "license": "ISC",
+  "license": "MIT",
+  "engines": {    
+    "node": "^18.0.0"
+  },
   "dependencies": {
     "@fastify/cookie": "^8.1.0",
     "@fastify/middie": "^8.0.0",

@@ -9,6 +9,7 @@ This project is a starter kit for building applications with Fastify and React i
     - [Backend (Fastify + TRPC)](#backend-fastify--trpc)
     - [State management (Jotai)](#state-management-jotai)
     - [Testing (Vitest)](#testing-vitest)
+    - [SSR](#ssr)
 
 ## Reasons for it
 
@@ -40,3 +41,8 @@ I prefer to encapsulate their power into reusable hooks.
 ### Testing (Vitest)
 
 [Vitest](https://vitest.dev) has API similar to Jest, it's much faster and can be used to test both client and server code.
+
+### SSR
+
+This starter doesn't include server side rendering, which comes with more complications and questions.  
+SSR is still achievable by following this [Vite page](https://vitejs.dev/guide/ssr.html).
