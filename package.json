@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "npm run clean && tsc",
-    "clean": "del dist",
+    "clean": "npx del dist",
     "dev": "npm run clean && nodemon src/index.ts",
     "test": "vitest",
     "coverage": "vitest run --coverage"
