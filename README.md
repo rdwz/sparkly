@@ -15,7 +15,7 @@ This project is a starter kit for building applications with Fastify and React i
 
 * having an alternative to NextJS with more control over its components
 * API + Frontend in the same place allows quicker development
-* I can try out latest Node version
+* using latest Node version and being limited by Lambda's Node version
 
 ## Description
 

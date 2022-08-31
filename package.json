@@ -8,6 +8,7 @@
     "build": "tsc",
     "clean": "del dist",
     "dev": "npm run clean && nodemon src/index.ts",
+    "prepare": "npm run build",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
