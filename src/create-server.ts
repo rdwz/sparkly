@@ -5,25 +5,28 @@ import ws from '@fastify/websocket'
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify/dist/trpc-server-adapters-fastify.cjs.js'
 import fastify from 'fastify'
 import { createViteMiddleware } from './create-vite-middleware.js'
-import { env } from './env.js'
+import { env as defaultEnv } from './env.js'
 import { createContext } from './lib/create-context.js'
 import { router } from './router/index.js'
 
-export const createServer = async () => {
+const envToLogger = {
+  development: {
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        translateTime: 'HH:MM:ss Z',
+        ignore: 'pid,hostname',
+      },
+    },
+  },
+  production: {},
+  test: false,
+}
+
+export const createServer = async (env = defaultEnv) => {
   const server = fastify({
     maxParamLength: 5000,
-    logger:
-      env.NODE_ENV === 'development'
-        ? {
-            transport: {
-              target: 'pino-pretty',
-              options: {
-                translateTime: 'HH:MM:ss Z',
-                ignore: 'pid,hostname',
-              },
-            },
-          }
-        : {},
+    logger: envToLogger[env.NODE_ENV],
   })
 
   await server.register(cookie, {

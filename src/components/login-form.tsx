@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Button, Input } from 'react-daisyui'
-import { useAuth } from '../atoms/auth-atom'
+import * as authAtom from '../atoms/auth-atom'
 
 export const LoginForm = () => {
   const [email, setEmail] = useState('')
-  const auth = useAuth()
+  const auth = authAtom.useAuth()
 
   if (auth.email) {
     return (
