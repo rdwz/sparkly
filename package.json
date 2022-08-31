@@ -5,10 +5,9 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "npm run clean && tsc",
     "clean": "del dist",
     "dev": "npm run clean && nodemon src/index.ts",
-    "prepare": "npm run build",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
