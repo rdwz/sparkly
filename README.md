@@ -1,16 +1,20 @@
 # Full typed Fastify React 
 
-This project is a starter kit for build applications with Fastify and React writing TypeScript.
+This project is a starter kit for building applications with Fastify and React in TypeScript.
+
+- [Full typed Fastify React](#full-typed-fastify-react)
+  - [Reasons for it](#reasons-for-it)
+  - [Description](#description)
+    - [Database (SQL + Prisma)](#database-sql--prisma)
+    - [Backend (Fastify + TRPC)](#backend-fastify--trpc)
+    - [State management (Jotai)](#state-management-jotai)
+    - [Testing (Vitest)](#testing-vitest)
 
 ## Reasons for it
 
-### Quickly develop side project
-
-### Full control over the used technologies
-
-### Free choice where to deploy the app
-
-### Free choice about the Node version to use
+* having an alternative to NextJS with more control over its components
+* API + Frontend in the same place allows quicker development
+* I can try out latest Node version
 
 ## Description
 
@@ -33,3 +37,6 @@ I think that the said "With great power comes great responsibility" is very true
 Each piece of state is called "atom" and can be reused and watched anywhere in the codebase.  
 I prefer to encapsulate their power into reusable hooks.
 
+### Testing (Vitest)
+
+[Vitest](https://vitest.dev) has API similar to Jest, it's much faster and can be used to test both client and server code.
