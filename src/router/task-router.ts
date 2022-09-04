@@ -35,6 +35,43 @@ export const taskRouter = createRouter()
       return task
     },
   })
+  .mutation('remove', {
+    input: z.object({
+      id: z.string(),
+    }),
+    resolve: async ({ ctx, input }) => {
+      if (!ctx.user) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' })
+      }
+
+      const task = await db.task.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          user: true,
+        },
+      })
+
+      if (!task) {
+        throw new TRPCError({ code: 'BAD_REQUEST' })
+      }
+
+      if (task.user.email !== ctx.user.email) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' })
+      }
+
+      await db.task.delete({
+        where: {
+          id: input.id,
+        },
+      })
+
+      ee.emit('delete', task)
+
+      return task
+    },
+  })
   .subscription('onCreate', {
     resolve() {
       return new trpc.Subscription<
@@ -50,6 +87,21 @@ export const taskRouter = createRouter()
 
         return () => {
           ee.off('create', onCreate)
+        }
+      })
+    },
+  })
+  .subscription('onDelete', {
+    resolve() {
+      return new trpc.Subscription<Task>((emit) => {
+        const onDelete = (data: Task) => {
+          emit.data(data)
+        }
+
+        ee.on('delete', onDelete)
+
+        return () => {
+          ee.off('delete', onDelete)
         }
       })
     },

@@ -2,11 +2,14 @@ import cookie, { FastifyCookieOptions } from '@fastify/cookie'
 import middie from '@fastify/middie'
 import fastifySession from '@fastify/session'
 import ws from '@fastify/websocket'
-import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify/dist/trpc-server-adapters-fastify.cjs.js'
+import {
+  CreateFastifyContextOptions,
+  fastifyTRPCPlugin,
+} from '@trpc/server/adapters/fastify/dist/trpc-server-adapters-fastify.cjs.js'
 import fastify from 'fastify'
 import { createViteMiddleware } from './create-vite-middleware.js'
 import { env as defaultEnv } from './env.js'
-import { createContext } from './lib/create-context.js'
+import * as context from './lib/create-context.js'
 import { router } from './router/index.js'
 
 const envToLogger = {
@@ -40,7 +43,7 @@ export const createServer = async (env = defaultEnv) => {
     cookieName: 'sessionId',
     secret: env.SECRET,
     cookie: {
-      secure: false,
+      secure: env.NODE_ENV === 'production',
       expires: tomorrow,
     },
   })
@@ -50,7 +53,14 @@ export const createServer = async (env = defaultEnv) => {
   await server.register(fastifyTRPCPlugin, {
     useWSS: true,
     prefix: '/trpc',
-    trpcOptions: { router, createContext },
+    trpcOptions: {
+      router,
+      createContext: async (args: CreateFastifyContextOptions) => {
+        const value = await context.createContext(args)
+
+        return value
+      },
+    },
   })
 
   await server.use(await createViteMiddleware())

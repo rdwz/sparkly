@@ -2,19 +2,17 @@ import { useAtom } from 'jotai'
 import { atomWithImmer } from 'jotai/immer'
 import { Button, Form, Input } from 'react-daisyui'
 import { authAtom } from '../atoms/auth-atom'
-import { tasksAtom } from '../atoms/tasks-atom'
-import { trpc } from '../lib/trpc'
+import { tasksAtom, useTasks } from '../atoms/tasks-atom'
 
 const taskFormAtom = atomWithImmer({
   name: '',
-  completed: false,
 })
 
 export const TaskForm = () => {
   const [task, setTask] = useAtom(taskFormAtom)
   const [, setTasks] = useAtom(tasksAtom)
   const [auth] = useAtom(authAtom)
-  const createTask = trpc.useMutation('task.create')
+  const tasks = useTasks()
 
   if (!auth.email) {
     return null
@@ -26,7 +24,7 @@ export const TaskForm = () => {
       onSubmit={(e) => {
         e.preventDefault()
 
-        createTask.mutateAsync(task).then((data) => {
+        tasks.create(task).then((data) => {
           setTasks((draft) => {
             draft[data.id] = data
           })

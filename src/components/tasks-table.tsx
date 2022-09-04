@@ -1,10 +1,12 @@
-import { Progress } from 'react-daisyui'
+import { Button, Progress } from 'react-daisyui'
+import { useAuth } from '../atoms/auth-atom'
 import { useTasks } from '../atoms/tasks-atom'
 
 export const TasksTable = () => {
-  const { tasks, query } = useTasks()
+  const tasks = useTasks()
+  const auth = useAuth()
 
-  if (query.isLoading || !query.data) {
+  if (tasks.list.isLoading || !tasks.list.data) {
     return (
       <div className='flex flex-col gap-y-2'>
         <Progress className='w-56' value={0} />
@@ -24,10 +26,11 @@ export const TasksTable = () => {
           <th>Name</th>
           <th>Author</th>
           <th>Completed</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
-        {Object.entries(tasks)
+        {Object.entries(tasks.updatedTasks)
           .sort(([, taskA], [, taskB]) => {
             return taskA.createdAt > taskB.createdAt ? -1 : 1
           })
@@ -40,6 +43,17 @@ export const TasksTable = () => {
                 </td>
                 <td>{task.user.email}</td>
                 <td>{task.completed}</td>
+                <td>
+                  {auth?.email === task.user.email && (
+                    <Button
+                      onClick={() => {
+                        tasks.delete(task.id)
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  )}
+                </td>
               </tr>
             )
           })}

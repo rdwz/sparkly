@@ -12,14 +12,14 @@ export const userRouter = createRouter()
     async resolve({ input, ctx }): Promise<{ email: string }> {
       let user = await db.user.findFirst({
         where: {
-          email: input.email,
+          email: input.email.trim(),
         },
       })
 
       if (!user) {
         user = await db.user.create({
           data: {
-            email: input.email,
+            email: input.email.trim(),
           },
         })
       }
@@ -31,7 +31,12 @@ export const userRouter = createRouter()
     },
   })
   .mutation('logout', {
-    resolve: ({ ctx }) => {
+    input: z.object({
+      email: z.string(),
+    }),
+    resolve: async ({ ctx, input }) => {
+      ctx.req.log.info(`Logging out: ${input}`)
+
       ctx!.req.session.destroy()
 
       return

@@ -1,27 +1,32 @@
+# fly.toml file generated for fastify-react-ts on 2022-09-01T17:17:41+01:00
+
 app = "fastify-react-ts"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
-[build]
-  builder = "heroku/buildpacks:20"
 [env]
-  DATABASE_URL = "file:/data/sqlite.db"
-  PORT = "8080"
   NODE_ENV = "production"
+  DATABASE_URL = "file:/data/dev.db"
+  VITE_SERVER_URL = "https://fastify-react-ts.fly.dev"
+  JWT_SECRET = "random-jwt-secret"
+  SECRET = "a secret with minimum length of 32 characters"
+
+[mounts]
+  source="fastify_react_ts_data"
+  destination="/data"
 
 [experimental]
   allowed_public_ports = []
   auto_rollback = true
-  cmd = "start.sh"
-  entrypoint = "sh"  
 
 [[services]]
   http_checks = []
-  internal_port = 8080
+  internal_port = 3000
   processes = ["app"]
   protocol = "tcp"
   script_checks = []
+
   [services.concurrency]
     hard_limit = 25
     soft_limit = 20
@@ -41,7 +46,3 @@ processes = []
     interval = "15s"
     restart_limit = 0
     timeout = "2s"
-
-[mounts]
-  source="fastify_react_ts_data"
-  destination="/data"

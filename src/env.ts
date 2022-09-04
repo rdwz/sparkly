@@ -3,10 +3,12 @@ import z from 'zod'
 
 dotenv.config()
 let envSchema = z.object({
-  NODE_ENV: z.enum(['production', 'development', 'test']),
-  JWT_SECRET: z.string(),
-  PORT: z.string(),
-  SECRET: z.string(),
+  NODE_ENV: z
+    .enum(['production', 'development', 'test'])
+    .default('development'),
+  JWT_SECRET: z.string().default('random-jwt-secret'),
+  PORT: z.string().default('3000'),
+  SECRET: z.string().default('a secret with minimum length of 32 characters'),
 })
 
 export const env = envSchema.parse(process.env)
