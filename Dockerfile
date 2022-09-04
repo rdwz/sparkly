@@ -44,7 +44,7 @@ WORKDIR /app
 COPY --from=production-deps /app/node_modules /app/node_modules
 COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
 COPY --from=build /app/dist /app/dist
-COPY --from=build /app/public /app/public
+# COPY --from=build /app/public /app/public # Empty at the moment
 ADD . .
 
 EXPOSE 3000

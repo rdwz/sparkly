@@ -12,6 +12,7 @@ This project is a starter kit for building applications with Fastify and React i
     - [Testing (Vitest)](#testing-vitest)
     - [SSR](#ssr)
   - [Deployment](#deployment)
+    - [Continuous deployment](#continuous-deployment)
     - [flyctl CLI](#flyctl-cli)
     - [Dockerfile](#dockerfile)
     - [Database (SQLite)](#database-sqlite)
@@ -65,6 +66,12 @@ SSR is still achievable by following this [Vite page](https://vitejs.dev/guide/s
 
 I explored for the first time deployment on [Fly.io](https://fly.io) and after some learning steps, I have been happy about it.
 I'll mention my key learning points:
+
+### Continuous deployment
+
+This repo already contains a [GitHub action provided by Fly.io](https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/) for continuous deployment.  
+Read the documentation to generate a Fly.io to provide as GitHub secret.  
+Each time there is a new merge on main branch Docker image is built and deployed.
 
 ### flyctl CLI
 
