@@ -1,10 +1,48 @@
+import type { Task } from '@prisma/client'
+import { useAtom } from 'jotai'
+import { atomWithImmer } from 'jotai/immer'
+import { useCallback, useEffect } from 'react'
 import { Button, Progress } from 'react-daisyui'
+import type { TaskWithUser } from '../@types/task-with-user'
 import { useAuth } from '../atoms/auth-atom'
 import { useTasks } from '../atoms/tasks-atom'
 
+const updatedTasksAtom = atomWithImmer({} as Record<string, TaskWithUser>)
+
 export const TasksTable = () => {
-  const tasks = useTasks()
   const auth = useAuth()
+  const [updatedTasks, setUpdatedTasks] = useAtom(updatedTasksAtom)
+  const removeTask = useCallback(
+    (task: Task) => {
+      setUpdatedTasks((draft) => {
+        delete draft[task.id]
+      })
+    },
+    [setUpdatedTasks],
+  )
+  const addTask = useCallback(
+    (task: TaskWithUser) => {
+      if (task.user.email === auth?.email) {
+        return
+      }
+      setUpdatedTasks((draft) => {
+        draft[task.id] = task
+      })
+    },
+    [setUpdatedTasks],
+  )
+  const tasks = useTasks({
+    onCreate: addTask,
+    onDelete: removeTask,
+  })
+
+  useEffect(() => {
+    if (tasks.list.data) {
+      setUpdatedTasks((draft) => {
+        Object.assign(draft, tasks.list.data)
+      })
+    }
+  }, [tasks.list.data])
 
   if (tasks.list.isLoading || !tasks.list.data) {
     return (
@@ -30,7 +68,7 @@ export const TasksTable = () => {
         </tr>
       </thead>
       <tbody>
-        {Object.entries(tasks.updatedTasks)
+        {Object.entries(updatedTasks)
           .sort(([, taskA], [, taskB]) => {
             return taskA.createdAt > taskB.createdAt ? -1 : 1
           })

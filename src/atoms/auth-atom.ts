@@ -1,4 +1,5 @@
 import { atom, useAtom } from 'jotai'
+import { useEffect } from 'react'
 import { trpc } from '../lib/trpc'
 
 export const authAtom = atom({
@@ -9,6 +10,14 @@ export const useAuth = () => {
   const [auth, setAuth] = useAtom(authAtom)
   const logoutMutation = trpc.useMutation('user.logout')
   const loginMutation = trpc.useMutation('user.login')
+
+  useEffect(() => {
+    if (auth.email) {
+      loginMutation.mutateAsync({
+        email: auth.email,
+      })
+    }
+  }, [])
 
   return {
     email: auth.email,
