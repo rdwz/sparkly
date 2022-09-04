@@ -1,8 +1,8 @@
-# Full typed Fastify React 
+# Fully typed Fastify + React starter kit
 
 This project is a starter kit for building applications with Fastify and React in TypeScript.
 
-- [Full typed Fastify React](#full-typed-fastify-react)
+- [Fully typed Fastify + React starter kit](#fully-typed-fastify--react-starter-kit)
   - [Reasons for it](#reasons-for-it)
   - [How to use it](#how-to-use-it)
   - [Description](#description)
