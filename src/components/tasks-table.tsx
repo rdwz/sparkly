@@ -7,7 +7,7 @@ import type { TaskWithUser } from '../@types/task-with-user'
 import { useAuth } from '../atoms/auth-atom'
 import { useTasks } from '../atoms/tasks-atom'
 
-const updatedTasksAtom = atomWithImmer({} as Record<string, TaskWithUser>)
+const updatedTasksAtom = atomWithImmer<Record<string, TaskWithUser>>({})
 
 export const TasksTable = () => {
   const auth = useAuth()
@@ -15,6 +15,7 @@ export const TasksTable = () => {
   const removeTask = useCallback(
     (task: Task) => {
       setUpdatedTasks((draft) => {
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete draft[task.id]
       })
     },
@@ -37,14 +38,14 @@ export const TasksTable = () => {
   })
 
   useEffect(() => {
-    if (tasks.list.data) {
+    if (tasks.list.data != null) {
       setUpdatedTasks((draft) => {
         Object.assign(draft, tasks.list.data)
       })
     }
   }, [tasks.list.data])
 
-  if (tasks.list.isLoading || !tasks.list.data) {
+  if (tasks.list.isLoading || tasks.list.data == null) {
     return (
       <div className='flex flex-col gap-y-2'>
         <Progress className='w-56' value={0} />

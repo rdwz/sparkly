@@ -13,10 +13,10 @@ export function createContext({ req, res }: CreateFastifyContextOptions) {
       user?: User
     }
   } = req
-  const token = customReq?.session?.get('token') as string | undefined
+  const token: any = customReq?.session?.get('token')
 
-  if (token) {
-    user = jwt.verify(token, env.JWT_SECRET) as User
+  if (token !== undefined) {
+    user = jwt.verify(token, env.JWT_SECRET) as unknown as User
   }
 
   return { req: customReq, res, user }

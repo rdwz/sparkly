@@ -14,17 +14,17 @@ export const TaskForm = () => {
   const [auth] = useAtom(authAtom)
   const tasks = useTasks()
 
-  if (!auth.email) {
+  if (auth.email === null) {
     return null
   }
 
   return (
     <form
       className='form-control'
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault()
 
-        tasks.create(task).then((data) => {
+        return await tasks.create(task).then((data) => {
           setTasks((draft) => {
             draft[data.id] = data
           })

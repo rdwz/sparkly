@@ -31,6 +31,8 @@ npx prisma migrate dev # run migrations
 npm run dev            # start project on localhost:3000
 ```
 
+Deployed to [fastify-react-ts.fly.dev](https://fastify-react-ts.fly.dev)
+
 ## Description
 
 There are many opinionated choices into this starter kit that I am going to list and motivate.  

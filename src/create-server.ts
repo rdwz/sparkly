@@ -32,9 +32,11 @@ export const createServer = async (env = defaultEnv) => {
     logger: envToLogger[env.NODE_ENV],
   })
 
-  await server.register(cookie, {
+  const fastifyCookieOptions: FastifyCookieOptions = {
     secret: env.SECRET,
-  } as FastifyCookieOptions)
+  }
+
+  await server.register(cookie, fastifyCookieOptions)
   const today = new Date()
   const tomorrow = new Date(today)
   tomorrow.setDate(tomorrow.getDate() + 1)
@@ -65,5 +67,5 @@ export const createServer = async (env = defaultEnv) => {
 
   await server.use(await createViteMiddleware())
 
-  return server
+  return await server
 }

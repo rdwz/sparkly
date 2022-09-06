@@ -17,21 +17,21 @@ export const useTasks = (props: UseTasksProps = {}) => {
 
   trpc.useSubscription(['task.onCreate'], {
     onNext: (task: TaskWithUser) => {
-      props.onCreate && props.onCreate(task)
+      props.onCreate?.(task)
     },
     onError: console.error,
   })
 
   trpc.useSubscription(['task.onDelete'], {
     onNext: (task: Task) => {
-      props.onDelete && props.onDelete(task)
+      props.onDelete?.(task)
     },
     onError: console.error,
   })
 
   return {
-    create: (task: { name: string }) => {
-      return create.mutateAsync({ name: task.name })
+    create: async (task: { name: string }) => {
+      return await create.mutateAsync({ name: task.name })
     },
     list,
     delete: (id: string) => {

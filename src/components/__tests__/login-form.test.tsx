@@ -9,8 +9,8 @@ describe('<LoginForm />', () => {
     it('renders login form', () => {
       vi.spyOn(authAtom, 'useAuth').mockReturnValueOnce({
         email: null,
-        login: () => {},
-        logout: () => {},
+        login: async () => {},
+        logout: async () => {},
       })
       render(<LoginForm />)
 
@@ -22,8 +22,8 @@ describe('<LoginForm />', () => {
     it('renders login form', () => {
       vi.spyOn(authAtom, 'useAuth').mockReturnValueOnce({
         email: 'test@email.com',
-        login: () => {},
-        logout: () => {},
+        login: async () => {},
+        logout: async () => {},
       })
       render(<LoginForm />)
 

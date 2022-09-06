@@ -16,7 +16,7 @@ export const userRouter = createRouter()
         },
       })
 
-      if (!user) {
+      if (user === null) {
         user = await db.user.create({
           data: {
             email: input.email.trim(),
@@ -25,7 +25,7 @@ export const userRouter = createRouter()
       }
 
       const token = jwt.sign(user, env.JWT_SECRET)
-      ctx!.req.session.set('token', token)
+      ctx.req.session.set('token', token)
 
       return { email: input.email }
     },
@@ -34,12 +34,8 @@ export const userRouter = createRouter()
     input: z.object({
       email: z.string(),
     }),
-    resolve: async ({ ctx, input }) => {
-      ctx.req.log.info(`Logging out: ${input}`)
-
-      ctx!.req.session.destroy()
-
-      return
+    resolve: async ({ ctx }) => {
+      await ctx.req.session.destroy()
     },
   })
   .query('list', {

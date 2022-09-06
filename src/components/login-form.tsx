@@ -6,14 +6,14 @@ export const LoginForm = () => {
   const [email, setEmail] = useState('')
   const auth = authAtom.useAuth()
 
-  if (auth.email) {
+  if (auth.email !== null) {
     return (
       <form
         className='flex flex-row'
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault()
 
-          return auth.logout()
+          return await auth.logout()
         }}
       >
         <Button type='submit'>Logout user {auth.email}</Button>
@@ -24,10 +24,10 @@ export const LoginForm = () => {
   return (
     <form
       className='flex flex-row'
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault()
 
-        return auth.login(email)
+        return await auth.login(email)
       }}
     >
       <Input

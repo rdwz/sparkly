@@ -2,7 +2,8 @@ import dotenv from 'dotenv'
 import z from 'zod'
 
 dotenv.config()
-let envSchema = z.object({
+
+const envSchema = z.object({
   NODE_ENV: z
     .enum(['production', 'development', 'test'])
     .default('development'),

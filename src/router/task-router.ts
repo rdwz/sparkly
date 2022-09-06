@@ -15,7 +15,7 @@ export const taskRouter = createRouter()
       name: z.string(),
     }),
     resolve: async ({ ctx, input }) => {
-      if (!ctx.user) {
+      if (ctx.user == null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
@@ -40,7 +40,7 @@ export const taskRouter = createRouter()
       id: z.string(),
     }),
     resolve: async ({ ctx, input }) => {
-      if (!ctx.user) {
+      if (ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
@@ -53,7 +53,7 @@ export const taskRouter = createRouter()
         },
       })
 
-      if (!task) {
+      if (task == null) {
         throw new TRPCError({ code: 'BAD_REQUEST' })
       }
 
