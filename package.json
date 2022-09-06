@@ -12,6 +12,7 @@
     "start": "node ./dist/index.js",
     "test": "vitest --run",
     "test:types": "tsc --noEmit",
+    "test:ci": "npm run test:types; npm run coverage",
     "coverage": "vitest run --coverage"
   },
   "keywords": [
