@@ -42,7 +42,9 @@ export const TaskForm = () => {
           }}
         />
       </Form.Label>
-      <Button type='submit'>Create</Button>
+      <Button type='submit' className='btn-primary'>
+        Create
+      </Button>
     </form>
   )
 }
