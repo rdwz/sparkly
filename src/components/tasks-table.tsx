@@ -58,45 +58,45 @@ export const TasksTable = () => {
   }
 
   return (
-    <table className='table w-full'>
-      <thead>
-        <tr>
-          <th />
-          <th>Name</th>
-          <th>Author</th>
-          <th>Completed</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {Object.entries(updatedTasks)
-          .sort(([, taskA], [, taskB]) => {
-            return taskA.createdAt > taskB.createdAt ? -1 : 1
-          })
-          .map(([id, task], i) => {
-            return (
-              <tr key={id}>
-                <td>{i + 1}</td>
-                <td>
-                  <strong>{task.name}</strong>
-                </td>
-                <td>{task.user.email}</td>
-                <td>{task.completed}</td>
-                <td>
-                  {auth?.email === task.user.email && (
-                    <Button
-                      onClick={() => {
-                        tasks.delete(task.id)
-                      }}
-                    >
-                      Delete
-                    </Button>
-                  )}
-                </td>
-              </tr>
-            )
-          })}
-      </tbody>
-    </table>
+    <div className='overflow-x-scroll'>
+      <table className='table w-full'>
+        <thead>
+          <tr>
+            <th />
+            <th>Name</th>
+            <th>Author</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.entries(updatedTasks)
+            .sort(([, taskA], [, taskB]) => {
+              return taskA.createdAt > taskB.createdAt ? -1 : 1
+            })
+            .map(([id, task], i) => {
+              return (
+                <tr key={id}>
+                  <td>{i + 1}</td>
+                  <td>
+                    <strong>{task.name}</strong>
+                  </td>
+                  <td>{task.user.email}</td>
+                  <td>
+                    {auth?.email === task.user.email && (
+                      <Button
+                        onClick={() => {
+                          tasks.delete(task.id)
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  </td>
+                </tr>
+              )
+            })}
+        </tbody>
+      </table>
+    </div>
   )
 }

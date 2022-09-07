@@ -9,14 +9,16 @@ export const LoginForm = () => {
   if (auth.email !== null) {
     return (
       <form
-        className='flex flex-row'
+        className='portrait:w-full'
         onSubmit={async (e) => {
           e.preventDefault()
 
           return await auth.logout()
         }}
       >
-        <Button type='submit'>Logout user {auth.email}</Button>
+        <Button type='submit' className='portrait:w-full'>
+          Logout user {auth.email}
+        </Button>
       </form>
     )
   }
