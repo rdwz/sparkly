@@ -15,15 +15,13 @@
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "skipLibCheck": true,
-    "paths": {
-      "fastify-cookie": ["./src/@types/fastify-cookie"]
-    }
+    "skipLibCheck": true
   },
   "exclude": [
     "postcss.config.cjs",
     "tailwind.config.cjs",
     "vite.config.ts",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "dist"
   ]
 }
