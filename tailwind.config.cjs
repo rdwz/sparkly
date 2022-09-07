@@ -6,6 +6,9 @@ module.exports = {
     './index.html',
     './src/**/*.{ts,tsx}',
   ],
+  daisyui: {
+    themes: ["synthwave"],
+  },
   theme: {
     extend: {},
   },

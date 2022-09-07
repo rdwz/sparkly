@@ -63,9 +63,9 @@ export const TasksTable = () => {
         <thead>
           <tr>
             <th />
-            <th>Name</th>
+            <th>Task</th>
             <th>Author</th>
-            <th></th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -81,8 +81,8 @@ export const TasksTable = () => {
                     <strong>{task.name}</strong>
                   </td>
                   <td>{task.user.email}</td>
-                  <td>
-                    {auth?.email === task.user.email && (
+                  <td className='text-center'>
+                    {auth?.email === task.user.email ? (
                       <Button
                         onClick={() => {
                           tasks.delete(task.id)
@@ -90,6 +90,8 @@ export const TasksTable = () => {
                       >
                         Delete
                       </Button>
+                    ) : (
+                      <span>None</span>
                     )}
                   </td>
                 </tr>

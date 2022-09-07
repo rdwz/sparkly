@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, Input } from 'react-daisyui'
+import { Button, Input, InputGroup } from 'react-daisyui'
 import * as authAtom from '../atoms/auth-atom'
 
 export const LoginForm = () => {
@@ -25,23 +25,26 @@ export const LoginForm = () => {
 
   return (
     <form
-      className='flex flex-row'
+      className='w-full'
       onSubmit={async (e) => {
         e.preventDefault()
 
         return await auth.login(email)
       }}
     >
-      <Input
-        value={email}
-        type='email'
-        placeholder='Type your email'
-        required
-        onChange={(e) => {
-          setEmail(e.target.value)
-        }}
-      />
-      <Button>Login</Button>
+      <InputGroup className='w-full flex'>
+        <Input
+          value={email}
+          type='email'
+          placeholder='Type your email'
+          required
+          className='flex-1'
+          onChange={(e) => {
+            setEmail(e.target.value)
+          }}
+        />
+        <Button className='btn-primary'>Login</Button>
+      </InputGroup>
     </form>
   )
 }
