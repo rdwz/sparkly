@@ -8,7 +8,7 @@ export const Home = () => {
 
   return (
     <main className='container mx-auto grid grid-cols-1 gap-2 pr-1 pl-1'>
-      <section className='grid grid-cols-1 p-4 gap-2'>
+      <section className='portrait:grid grid-cols-1 p-4 gap-2 hidden portrait:visible'>
         <h1 className='text-xl text-center'>Fastify-React-TS</h1>
         <div className='text-center'>
           <Link href='https://fastify-react-ts.fly.dev' target='_blank'>
