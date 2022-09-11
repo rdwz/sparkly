@@ -13,7 +13,9 @@ type UseTasksProps = {
 export const useTasks = (props: UseTasksProps = {}) => {
   const create = trpc.useMutation(['task.create'])
   const deleteTask = trpc.useMutation(['task.remove'])
-  const list = trpc.useQuery(['task.list'])
+  const list = trpc.useQuery(['task.list'], {
+    refetchOnReconnect: true,
+  })
 
   trpc.useSubscription(['task.onCreate'], {
     onNext: (task: TaskWithUser) => {

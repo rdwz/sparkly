@@ -81,7 +81,7 @@ export const TasksTable = () => {
                     <strong>{task.name}</strong>
                   </td>
                   <td>{task.user.email}</td>
-                  <td className='text-center'>
+                  <td>
                     {auth?.email === task.user.email ? (
                       <Button
                         onClick={() => {
@@ -91,7 +91,7 @@ export const TasksTable = () => {
                         Delete
                       </Button>
                     ) : (
-                      <span>None</span>
+                      <Button disabled>None</Button>
                     )}
                   </td>
                 </tr>
