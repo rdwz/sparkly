@@ -122,7 +122,7 @@ describe('task-router', () => {
     })
 
     describe('when there are already more than 5 created by that use', () => {
-      it.only('returns conflict state', async () => {
+      it('returns conflict state', async () => {
         const createContextSpy = vi
           .spyOn(context, 'createContext')
           .mockResolvedValue({
