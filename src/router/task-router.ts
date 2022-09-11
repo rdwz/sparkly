@@ -19,6 +19,16 @@ export const taskRouter = createRouter()
         throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
 
+      const totalTasksByUser = await db.task.count({
+        where: {
+          userId: ctx.user.id,
+        },
+      })
+
+      if (totalTasksByUser > 5) {
+        throw new TRPCError({ code: 'CONFLICT' })
+      }
+
       const task = await db.task.create({
         data: {
           completed: false,

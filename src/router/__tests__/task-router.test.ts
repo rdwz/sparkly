@@ -27,29 +27,31 @@ describe('task-router', () => {
     vi.clearAllMocks()
   })
 
-  it('returns tasks', async () => {
-    vi.spyOn(db.task, 'findMany').mockResolvedValueOnce([
-      {
-        id: 'test',
-        name: 'Parappa',
-        completed: false,
-        user: {
-          id: 'user-id',
-          email: 'user@email.com',
+  describe('list', () => {
+    it('returns tasks', async () => {
+      vi.spyOn(db.task, 'findMany').mockResolvedValueOnce([
+        {
+          id: 'test',
+          name: 'Parappa',
+          completed: false,
+          user: {
+            id: 'user-id',
+            email: 'user@email.com',
+          },
+        } as any,
+      ])
+
+      const response = await server.inject('/trpc/task.list')
+
+      expect(response.statusCode).equals(200)
+      expect(response.json().result.data).toMatchObject({
+        test: {
+          id: 'test',
+          name: 'Parappa',
+          completed: false,
+          user: { id: 'user-id', email: 'user@email.com' },
         },
-      } as any,
-    ])
-
-    const response = await server.inject('/trpc/task.list')
-
-    expect(response.statusCode).equals(200)
-    expect(response.json().result.data).toMatchObject({
-      test: {
-        id: 'test',
-        name: 'Parappa',
-        completed: false,
-        user: { id: 'user-id', email: 'user@email.com' },
-      },
+      })
     })
   })
 
@@ -94,6 +96,52 @@ describe('task-router', () => {
 
         expect(createContextSpy).toHaveBeenCalledOnce()
         expect(response.statusCode).equals(400)
+      })
+    })
+  })
+
+  describe('create', () => {
+    describe('when user session is not present', () => {
+      it('returns not authorised', async () => {
+        const createContextSpy = vi
+          .spyOn(context, 'createContext')
+          .mockResolvedValue({
+            user: null,
+          } as any)
+        const response = await server.inject({
+          method: 'POST',
+          url: '/trpc/task.create',
+          payload: {
+            name: 'fake-name',
+          },
+        })
+
+        expect(createContextSpy).toHaveBeenCalledOnce()
+        expect(response.statusCode).equals(401)
+      })
+    })
+
+    describe('when there are already more than 5 created by that use', () => {
+      it.only('returns conflict state', async () => {
+        const createContextSpy = vi
+          .spyOn(context, 'createContext')
+          .mockResolvedValue({
+            user: {
+              id: 'fake-user',
+            },
+          } as any)
+        vi.spyOn(db.task, 'count').mockResolvedValueOnce(10)
+
+        const response = await server.inject({
+          method: 'POST',
+          url: '/trpc/task.create',
+          payload: {
+            name: 'fake-name',
+          },
+        })
+
+        expect(createContextSpy).toHaveBeenCalledOnce()
+        expect(response.statusCode).equals(409)
       })
     })
   })
