@@ -18,9 +18,7 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
-      run: npx playwright test
-      env:
-        PW_EXPERIMENTAL_TS_ESM: 1
+      run: npm run test:e2e
     - uses: actions/upload-artifact@v2
       if: always()
       with:
