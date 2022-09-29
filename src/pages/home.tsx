@@ -4,11 +4,11 @@ import { TaskForm } from '../components/task-form'
 import { TasksTable } from '../components/tasks-table'
 
 export const Home = () => {
-  return (
-    <Layout>
-      <LoginForm />
-      <TaskForm />
-      <TasksTable />
-    </Layout>
-  )
+	return (
+		<Layout>
+			<LoginForm />
+			<TaskForm />
+			<TasksTable />
+		</Layout>
+	)
 }

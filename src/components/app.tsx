@@ -8,26 +8,26 @@ import { Pages } from '../pages'
 const queryClient = new QueryClient()
 
 interface AuthProps {
-  children: React.ReactNode
+	children: React.ReactNode
 }
 
 const Auth = (props: AuthProps) => {
-  useAuth()
+	useAuth()
 
-  return <>{props.children}</>
+	return <>{props.children}</>
 }
 
 export const App = () => {
-  const trpcClient = useTrpc()
-  return (
-    <BrowserRouter>
-      <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>
-          <Auth>
-            <Pages />
-          </Auth>
-        </QueryClientProvider>
-      </trpc.Provider>
-    </BrowserRouter>
-  )
+	const trpcClient = useTrpc()
+	return (
+		<BrowserRouter>
+			<trpc.Provider client={trpcClient} queryClient={queryClient}>
+				<QueryClientProvider client={queryClient}>
+					<Auth>
+						<Pages />
+					</Auth>
+				</QueryClientProvider>
+			</trpc.Provider>
+		</BrowserRouter>
+	)
 }
