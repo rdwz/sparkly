@@ -1,4 +1,5 @@
 import type { Task } from '@prisma/client'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useAtom } from 'jotai'
 import { atomWithImmer } from 'jotai/immer'
 import { useCallback, useEffect } from 'react'
@@ -12,6 +13,7 @@ const updatedTasksAtom = atomWithImmer<Record<string, TaskWithUser>>({})
 export const TasksTable = () => {
 	const auth = useAuth()
 	const [updatedTasks, setUpdatedTasks] = useAtom(updatedTasksAtom)
+
 	const removeTask = useCallback(
 		(task: Task) => {
 			setUpdatedTasks((draft) => {
@@ -69,34 +71,41 @@ export const TasksTable = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{Object.entries(updatedTasks)
-						.sort(([, taskA], [, taskB]) => {
-							return taskA.createdAt > taskB.createdAt ? -1 : 1
-						})
-						.map(([id, task], i) => {
-							return (
-								<tr key={id}>
-									<td>{i + 1}</td>
-									<td>
-										<strong>{task.name}</strong>
-									</td>
-									<td>{task.user.email}</td>
-									<td>
-										{auth?.email === task.user.email ? (
-											<Button
-												onClick={() => {
-													tasks.delete(task.id)
-												}}
-											>
-												Delete
-											</Button>
-										) : (
-											<Button disabled>None</Button>
-										)}
-									</td>
-								</tr>
-							)
-						})}
+					<AnimatePresence>
+						{Object.entries(updatedTasks)
+							.sort(([, taskA], [, taskB]) => {
+								return taskA.createdAt > taskB.createdAt ? -1 : 1
+							})
+							.map(([id, task], i) => {
+								return (
+									<motion.tr
+										key={id}
+										initial={{ opacity: 0 }}
+										animate={{ opacity: 1 }}
+										exit={{ opacity: 0 }}
+									>
+										<td>{i + 1}</td>
+										<td>
+											<strong>{task.name}</strong>
+										</td>
+										<td>{task.user.email}</td>
+										<td>
+											{auth?.email === task.user.email ? (
+												<Button
+													onClick={() => {
+														tasks.delete(task.id)
+													}}
+												>
+													Delete
+												</Button>
+											) : (
+												<Button disabled>None</Button>
+											)}
+										</td>
+									</motion.tr>
+								)
+							})}
+					</AnimatePresence>
 				</tbody>
 			</table>
 		</div>

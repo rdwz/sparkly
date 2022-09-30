@@ -25,6 +25,7 @@ export const TaskForm = () => {
 				e.preventDefault()
 
 				return await tasks.create(task).then((data) => {
+					setTask({ name: '' })
 					setTasks((draft) => {
 						draft[data.id] = data
 					})
