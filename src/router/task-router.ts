@@ -10,6 +10,39 @@ import { db } from '../lib/db.js'
 const ee = new EventEmitter()
 
 export const taskRouter = createRouter()
+	.mutation('update', {
+		input: z.object({
+			id: z.string(),
+			completed: z.boolean(),
+		}),
+		resolve: async ({ ctx, input }) => {
+			if (ctx.user === null) {
+				throw new TRPCError({ code: 'UNAUTHORIZED' })
+			}
+
+			const task = await db.task.findUnique({
+				where: {
+					id: input.id,
+				},
+			})
+
+			if (task == null) {
+				throw new TRPCError({ code: 'NOT_FOUND' })
+			}
+
+			const updated = await db.task.update({
+				where: {
+					id: input.id,
+				},
+				data: {
+					completed: input.completed,
+					updatedAt: new Date(),
+				},
+			})
+
+			return updated
+		},
+	})
 	.mutation('create', {
 		input: z.object({
 			name: z.string(),

@@ -65,6 +65,7 @@ export const TasksTable = () => {
 				<thead>
 					<tr>
 						<th />
+						<th>Status</th>
 						<th>Task</th>
 						<th>Author</th>
 						<th>Action</th>
@@ -85,6 +86,7 @@ export const TasksTable = () => {
 										exit={{ opacity: 0 }}
 									>
 										<td>{i + 1}</td>
+										<td>{task.completed ? 'Completed' : 'Pending'}</td>
 										<td>
 											<strong>{task.name}</strong>
 										</td>
