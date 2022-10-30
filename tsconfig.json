@@ -10,6 +10,7 @@
     "jsx": "react-jsxdev",
     "allowJs": false,
     "checkJs": false,
+    "module": "ESNext",
     "esModuleInterop": true,
     "preserveSymlinks": true,
     "forceConsistentCasingInFileNames": true,

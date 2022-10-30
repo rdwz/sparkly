@@ -9,10 +9,11 @@
     <meta name="author" content="Giacomo Rebonato">
   
     <meta name="google-site-verification" content="<%= GOOGLE_VERIFICATION_ID %>" />
+    <link rel="stylesheet" type="text/css" href="/src/styles/tailwind.css" />
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="src/components/index.tsx"></script>
+    <div id="root"><!--ssr-outlet--></div>
+    <script type="module" src="/src/entry-client.tsx"></script>
   </body>
 </html>
 

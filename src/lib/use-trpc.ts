@@ -1,3 +1,4 @@
+import type { TRPCLink } from '@trpc/client'
 import { httpLink } from '@trpc/client/links/httpLink'
 import { splitLink } from '@trpc/client/links/splitLink'
 import { createWSClient, wsLink } from '@trpc/client/links/wsLink'
@@ -7,17 +8,24 @@ import { trpc } from './trpc'
 
 export const useTrpc = () => {
 	const trpcClient = useMemo(() => {
-		const wsClient = createWSClient({
-			url: `${import.meta.env.VITE_SERVER_URL.replace('http', 'ws')}/trpc`,
-		})
-		return trpc.createClient({
-			links: [
+		const links: Array<TRPCLink<any>> = []
+
+		if (typeof window !== 'undefined') {
+			const wsClient = createWSClient({
+				url: `${import.meta.env.VITE_SERVER_URL.replace('http', 'ws')}/trpc`,
+			})
+
+			links.push(
 				splitLink({
 					condition: (op) => op.type === 'subscription',
 					true: wsLink({ client: wsClient }),
 					false: httpLink({ url: `${import.meta.env.VITE_SERVER_URL}/trpc` }),
 				}),
-			],
+			)
+		}
+
+		return trpc.createClient({
+			links,
 		})
 	}, [])
 

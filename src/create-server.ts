@@ -7,16 +7,24 @@ import {
 	fastifyTRPCPlugin,
 } from '@trpc/server/adapters/fastify/dist/trpc-server-adapters-fastify.cjs.js'
 import fastify from 'fastify'
-import { createViteMiddleware } from './create-vite-middleware.js'
+import fs from 'fs'
+import path from 'path'
+import * as url from 'url'
+import type { ViteDevServer } from 'vite'
+import { createViteServer } from './create-vite-server.js'
 import { env as defaultEnv } from './env.js'
 import * as context from './lib/create-context.js'
 import { router } from './router/index.js'
+
+const currentPath = url.fileURLToPath(new URL('.', import.meta.url))
+const rootPath = path.join(currentPath, '..')
 
 const envToLogger = {
 	development: {
 		transport: {
 			target: 'pino-pretty',
 			options: {
+				colorize: true,
 				translateTime: 'HH:MM:ss Z',
 				ignore: 'pid,hostname',
 			},
@@ -51,6 +59,20 @@ export const createServer = async (env = defaultEnv) => {
 	})
 
 	await server.register(middie)
+
+	let vite: ViteDevServer
+
+	if (env.NODE_ENV !== 'production') {
+		vite = await createViteServer()
+		await server.use(vite.middlewares)
+	} else {
+		await server.register((await import('@fastify/compress')).default)
+		await server.register((await import('@fastify/static')).default, {
+			root: path.join(rootPath, 'dist/client/assets'),
+			prefix: '/assets',
+		})
+	}
+
 	await server.register(ws)
 	await server.register(fastifyTRPCPlugin, {
 		useWSS: true,
@@ -65,7 +87,38 @@ export const createServer = async (env = defaultEnv) => {
 		},
 	})
 
-	await server.use(await createViteMiddleware())
+	server.get('*', async (req, reply) => {
+		let template: string = ''
+		let render: any
+
+		if (env.NODE_ENV !== 'production') {
+			template = fs.readFileSync(
+				path.resolve(currentPath, '..', 'index.html'),
+				'utf-8',
+			)
+			template = await vite.transformIndexHtml(req.url, template)
+			render = (await vite.ssrLoadModule('/src/entry-server.tsx'))['render']
+		} else {
+			template = fs.readFileSync(
+				path.join(rootPath, 'dist/client/index.html'),
+				'utf-8',
+			)
+
+			// @ts-expect-error
+			render = (await import('./server/entry-server.js')).render
+		}
+
+		const appHtml = render(url)
+
+		// if (context.url) {
+		// 	// Somewhere a `<Redirect>` was rendered
+		// 	return res.redirect(301, context.url)
+		// }
+
+		const html = template.replace('<!--ssr-outlet-->', appHtml)
+
+		return await reply.status(200).type('text/html').send(html)
+	})
 
 	return await server
 }

@@ -3,7 +3,7 @@ import { useAsync } from 'react-use'
 import { trpc } from '../lib/trpc'
 
 export const authAtom = atom({
-	email: localStorage.getItem('email') ?? (null as string | null),
+	email: null as string | null,
 })
 
 export const useAuth = () => {
