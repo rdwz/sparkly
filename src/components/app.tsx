@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { useAuth } from '../atoms/auth-atom'
 import { trpc } from '../lib/trpc'
-import { useTrpc } from '../lib/use-trpc'
+import { useTrpc } from '../lib/use-trpc.js'
 import { Pages } from '../pages'
 
 const queryClient = new QueryClient()
