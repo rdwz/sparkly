@@ -5,7 +5,8 @@ import ws from '@fastify/websocket'
 import {
 	CreateFastifyContextOptions,
 	fastifyTRPCPlugin,
-} from '@trpc/server/adapters/fastify/dist/trpc-server-adapters-fastify.cjs.js'
+} from '@trpc/server/adapters/fastify'
+
 import fastify from 'fastify'
 import fs from 'fs'
 import path from 'path'
@@ -14,7 +15,7 @@ import type { ViteDevServer } from 'vite'
 import { createViteServer } from './create-vite-server.js'
 import { env as defaultEnv } from './env.js'
 import * as context from './lib/create-context.js'
-import { router } from './router/index.js'
+import { appRouter } from './router/index.js'
 
 const currentPath = url.fileURLToPath(new URL('.', import.meta.url))
 const rootPath = path.join(currentPath, '..')
@@ -78,7 +79,7 @@ export const createServer = async (env = defaultEnv) => {
 		useWSS: true,
 		prefix: '/trpc',
 		trpcOptions: {
-			router,
+			router: appRouter,
 			createContext: async (args: CreateFastifyContextOptions) => {
 				const value = await context.createContext(args)
 

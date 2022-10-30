@@ -1,7 +1,7 @@
 import type { Task } from '@prisma/client'
 import { atomWithImmer } from 'jotai/immer'
 import type { TaskWithUser } from '../@types/task-with-user'
-import { trpc } from '../lib/trpc'
+import { trpcReact } from '../lib/trpc-react.js'
 
 export const tasksAtom = atomWithImmer<Record<string, TaskWithUser>>({})
 
@@ -11,22 +11,22 @@ type UseTasksProps = {
 }
 
 export const useTasks = (props: UseTasksProps = {}) => {
-	const create = trpc.useMutation(['task.create'])
-	const deleteTask = trpc.useMutation(['task.remove'])
-	const list = trpc.useQuery(['task.list'], {
+	const create = trpcReact.task.create.useMutation()
+	const deleteTask = trpcReact.task.remove.useMutation()
+	const list = trpcReact.task.list.useQuery(undefined, {
 		refetchOnReconnect: true,
 		refetchOnMount: true,
 	})
 
-	trpc.useSubscription(['task.onCreate'], {
-		onNext: (task: TaskWithUser) => {
+	trpcReact.task.onCreate.useSubscription(undefined, {
+		onData: (task: TaskWithUser) => {
 			props.onCreate?.(task)
 		},
 		onError: console.error,
 	})
 
-	trpc.useSubscription(['task.onDelete'], {
-		onNext: (task: Task) => {
+	trpcReact.task.onDelete.useSubscription(undefined, {
+		onData: (task: Task) => {
 			props.onDelete?.(task)
 		},
 		onError: console.error,
@@ -34,7 +34,7 @@ export const useTasks = (props: UseTasksProps = {}) => {
 
 	return {
 		create: async (task: { name: string }) => {
-			return await create.mutateAsync({ name: task.name })
+			return create.mutateAsync({ name: task.name })
 		},
 		list,
 		delete: (id: string) => {

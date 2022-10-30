@@ -1,6 +1,6 @@
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useAuth } from '../atoms/auth-atom'
-import { trpc } from '../lib/trpc'
+import { trpcReact } from '../lib/trpc-react'
 import { useTrpc } from '../lib/use-trpc.js'
 import { Pages } from '../pages'
 
@@ -19,12 +19,12 @@ const Auth = (props: AuthProps) => {
 export const App = () => {
 	const trpcClient = useTrpc()
 	return (
-		<trpc.Provider client={trpcClient} queryClient={queryClient}>
+		<trpcReact.Provider client={trpcClient} queryClient={queryClient}>
 			<QueryClientProvider client={queryClient}>
 				<Auth>
 					<Pages />
 				</Auth>
 			</QueryClientProvider>
-		</trpc.Provider>
+		</trpcReact.Provider>
 	)
 }

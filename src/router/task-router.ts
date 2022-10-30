@@ -1,21 +1,24 @@
 import type { Task, User } from '@prisma/client'
-import * as trpc from '@trpc/server'
 import { TRPCError } from '@trpc/server'
+import { observable } from '@trpc/server/observable'
+
 import { EventEmitter } from 'events'
 import { z } from 'zod'
 import type { TaskWithUser } from '../@types/task-with-user.js'
-import { createRouter } from '../lib/create-router.js'
 import { db } from '../lib/db.js'
+import { publicProcedure, router } from '../lib/trpc.js'
 
 const ee = new EventEmitter()
 
-export const taskRouter = createRouter()
-	.mutation('update', {
-		input: z.object({
-			id: z.string(),
-			completed: z.boolean(),
-		}),
-		resolve: async ({ ctx, input }) => {
+export const taskRouter = router({
+	update: publicProcedure
+		.input(
+			z.object({
+				id: z.string(),
+				completed: z.boolean(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
 			if (ctx.user === null) {
 				throw new TRPCError({ code: 'UNAUTHORIZED' })
 			}
@@ -41,13 +44,14 @@ export const taskRouter = createRouter()
 			})
 
 			return updated
-		},
-	})
-	.mutation('create', {
-		input: z.object({
-			name: z.string(),
 		}),
-		resolve: async ({ ctx, input }) => {
+	create: publicProcedure
+		.input(
+			z.object({
+				name: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
 			if (ctx.user == null) {
 				throw new TRPCError({ code: 'UNAUTHORIZED' })
 			}
@@ -76,13 +80,14 @@ export const taskRouter = createRouter()
 			ee.emit('create', task)
 
 			return task
-		},
-	})
-	.mutation('remove', {
-		input: z.object({
-			id: z.string(),
 		}),
-		resolve: async ({ ctx, input }) => {
+	remove: publicProcedure
+		.input(
+			z.object({
+				id: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
 			if (ctx.user === null) {
 				throw new TRPCError({ code: 'UNAUTHORIZED' })
 			}
@@ -113,60 +118,53 @@ export const taskRouter = createRouter()
 			ee.emit('delete', task)
 
 			return task
-		},
-	})
-	.subscription('onCreate', {
-		resolve() {
-			return new trpc.Subscription<
-				Task & {
-					user: User
-				}
-			>((emit) => {
-				const onCreate = (data: TaskWithUser) => {
-					emit.data(data)
-				}
+		}),
+	list: publicProcedure.query(async () => {
+		const tasks = await db.task.findMany({
+			include: {
+				user: true,
+			},
+		})
 
-				ee.on('create', onCreate)
+		const groupedTasks: Record<string, TaskWithUser> = tasks.reduce(
+			(acc: Record<string, TaskWithUser>, task: TaskWithUser) => {
+				acc[task.id] = task
 
-				return () => {
-					ee.off('create', onCreate)
-				}
-			})
-		},
-	})
-	.subscription('onDelete', {
-		resolve() {
-			return new trpc.Subscription<Task>((emit) => {
-				const onDelete = (data: Task) => {
-					emit.data(data)
-				}
+				return acc
+			},
+			{},
+		)
 
-				ee.on('delete', onDelete)
+		return groupedTasks
+	}),
+	onCreate: publicProcedure.subscription(() => {
+		return observable<
+			Task & {
+				user: User
+			}
+		>((emit) => {
+			const onCreate = (data: TaskWithUser) => {
+				emit.next(data)
+			}
 
-				return () => {
-					ee.off('delete', onDelete)
-				}
-			})
-		},
-	})
+			ee.on('create', onCreate)
 
-	.query('list', {
-		resolve: async (): Promise<Record<string, TaskWithUser>> => {
-			const tasks = await db.task.findMany({
-				include: {
-					user: true,
-				},
-			})
+			return () => {
+				ee.off('create', onCreate)
+			}
+		})
+	}),
+	onDelete: publicProcedure.subscription(() => {
+		return observable<Task>((emit) => {
+			const onDelete = (data: Task) => {
+				emit.next(data)
+			}
 
-			const groupedTasks: Record<string, TaskWithUser> = tasks.reduce(
-				(acc: Record<string, TaskWithUser>, task: TaskWithUser) => {
-					acc[task.id] = task
+			ee.on('delete', onDelete)
 
-					return acc
-				},
-				{},
-			)
-
-			return groupedTasks
-		},
-	})
+			return () => {
+				ee.off('delete', onDelete)
+			}
+		})
+	}),
+})

@@ -1,15 +1,17 @@
 import jwt from 'jsonwebtoken'
 import { z } from 'zod'
 import { env } from '../env.js'
-import { createRouter } from '../lib/create-router.js'
 import { db } from '../lib/db.js'
+import { publicProcedure, router } from '../lib/trpc.js'
 
-export const userRouter = createRouter()
-	.mutation('login', {
-		input: z.object({
-			email: z.string(),
-		}),
-		async resolve({ input, ctx }): Promise<{ email: string }> {
+export const userRouter = router({
+	login: publicProcedure
+		.input(
+			z.object({
+				email: z.string(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
 			let user = await db.user.findFirst({
 				where: {
 					email: input.email.trim(),
@@ -28,20 +30,19 @@ export const userRouter = createRouter()
 			ctx.req.session.set('token', token)
 
 			return { email: input.email }
-		},
-	})
-	.mutation('logout', {
-		input: z.object({
-			email: z.string(),
 		}),
-		resolve: async ({ ctx }) => {
+	logout: publicProcedure
+		.input(
+			z.object({
+				email: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx }) => {
 			await ctx.req.session.destroy()
-		},
-	})
-	.query('list', {
-		resolve: async () => {
-			const users = await db.user.findMany()
+		}),
+	list: publicProcedure.query(async () => {
+		const users = await db.user.findMany()
 
-			return users
-		},
-	})
+		return users
+	}),
+})

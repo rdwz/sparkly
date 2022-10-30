@@ -1,4 +1,8 @@
-import { createReactQueryHooks } from '@trpc/react'
-import type { Router } from '../router/index.js'
+import { initTRPC } from '@trpc/server'
+import type { Context } from './create-context'
 
-export const trpc = createReactQueryHooks<Router>()
+const t = initTRPC.context<Context>().create()
+
+export const middleware = t.middleware
+export const router = t.router
+export const publicProcedure = t.procedure

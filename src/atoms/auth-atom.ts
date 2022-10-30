@@ -1,6 +1,6 @@
 import { atom, useAtom } from 'jotai'
-import { useAsync } from 'react-use'
-import { trpc } from '../lib/trpc'
+import { useEffect } from 'react'
+import { trpcReact } from '../lib/trpc-react.js'
 
 export const authAtom = atom({
 	email: null as string | null,
@@ -8,12 +8,12 @@ export const authAtom = atom({
 
 export const useAuth = () => {
 	const [auth, setAuth] = useAtom(authAtom)
-	const logoutMutation = trpc.useMutation('user.logout')
-	const loginMutation = trpc.useMutation('user.login')
+	const logoutMutation = trpcReact.user.logout.useMutation()
+	const loginMutation = trpcReact.user.login.useMutation()
 
-	useAsync(async () => {
+	useEffect(() => {
 		if (auth.email !== null) {
-			await loginMutation.mutateAsync({
+			loginMutation.mutate({
 				email: auth.email,
 			})
 		}
@@ -24,7 +24,7 @@ export const useAuth = () => {
 		login: async (email: string) => {
 			setAuth({ email })
 
-			return await loginMutation
+			return loginMutation
 				.mutateAsync({
 					email,
 				})
@@ -43,7 +43,7 @@ export const useAuth = () => {
 
 			localStorage.removeItem('email')
 
-			return await logoutMutation
+			return logoutMutation
 				.mutateAsync({
 					email: auth.email,
 				})
