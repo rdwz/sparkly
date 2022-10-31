@@ -1,6 +1,5 @@
 import { Link, Navbar } from 'react-daisyui'
 import { PageLink } from '../components/page-link'
-import { viteEnv } from '../vite-env'
 
 interface LayoutProps {
 	children: React.ReactNode
@@ -11,7 +10,7 @@ export const Layout = (props: LayoutProps) => {
 		<main className='container mx-auto grid grid-cols-1 gap-2 p-2'>
 			<Navbar>
 				<Navbar.Start>
-					<PageLink to='/' className='link link-neutral hover:no-underline'>
+					<PageLink to='/' className='link-neutral link hover:no-underline'>
 						<h1 className='text-center text-xl text-primary'>
 							Fastify-React-TS
 						</h1>
@@ -19,7 +18,10 @@ export const Layout = (props: LayoutProps) => {
 				</Navbar.Start>
 				<Navbar.End className='grid grid-flow-col gap-2 text-secondary'>
 					<PageLink to='/about'>About</PageLink>
-					<Link href={viteEnv.VITE_GITHUB_URL} target='_blank'>
+					<Link
+						href='https://github.com/giacomorebonato/fastify-react-ts'
+						target='_blank'
+					>
 						GitHub
 					</Link>
 				</Navbar.End>

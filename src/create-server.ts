@@ -3,21 +3,15 @@ import middie from '@fastify/middie'
 import fastifySession from '@fastify/session'
 import ws from '@fastify/websocket'
 import {
-  CreateFastifyContextOptions,
-  fastifyTRPCPlugin
+	CreateFastifyContextOptions,
+	fastifyTRPCPlugin,
 } from '@trpc/server/adapters/fastify'
 
 import fastify from 'fastify'
-import fs from 'fs'
-import path from 'path'
-import * as url from 'url'
-import type { ViteDevServer } from 'vite'
 import { env as defaultEnv } from './env.js'
+import { reactSSR } from './fastify-plugins/react-ssr.js'
 import * as context from './lib/create-context.js'
 import { appRouter } from './router/index.js'
-
-const currentPath = url.fileURLToPath(new URL('.', import.meta.url))
-const rootPath = path.join(currentPath, '..')
 
 const envToLogger = {
 	development: {
@@ -60,20 +54,6 @@ export const createServer = async (env = defaultEnv) => {
 
 	await server.register(middie)
 
-	let vite: ViteDevServer
-
-	if (env.NODE_ENV !== 'production') {
-    const { createViteServer } = await import('./create-vite-server.js')
-		vite = await createViteServer()
-		await server.use(vite.middlewares)
-	} else {
-		await server.register((await import('@fastify/compress')).default)
-		await server.register((await import('@fastify/static')).default, {
-			root: path.join(rootPath, 'dist/client/assets'),
-			prefix: '/assets',
-		})
-	}
-
 	await server.register(ws)
 	await server.register(fastifyTRPCPlugin, {
 		useWSS: true,
@@ -88,38 +68,7 @@ export const createServer = async (env = defaultEnv) => {
 		},
 	})
 
-	server.get('*', async (req, reply) => {
-		let template: string = ''
-		let render: any
-
-		if (env.NODE_ENV !== 'production') {
-			template = fs.readFileSync(
-				path.resolve(currentPath, '..', 'index.html'),
-				'utf-8',
-			)
-			template = await vite.transformIndexHtml(req.url, template)
-			render = (await vite.ssrLoadModule('/src/entry-server.tsx'))['render']
-		} else {
-			template = fs.readFileSync(
-				path.join(rootPath, 'dist/client/index.html'),
-				'utf-8',
-			)
-
-			// @ts-expect-error
-			render = (await import('./server/entry-server.js')).render
-		}
-
-		const appHtml = render(url)
-
-		// if (context.url) {
-		// 	// Somewhere a `<Redirect>` was rendered
-		// 	return res.redirect(301, context.url)
-		// }
-
-		const html = template.replace('<!--ssr-outlet-->', appHtml)
-
-		return await reply.status(200).type('text/html').send(html)
-	})
+	await server.register(reactSSR)
 
 	return await server
 }

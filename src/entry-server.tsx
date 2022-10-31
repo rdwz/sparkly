@@ -1,6 +1,6 @@
 import ReactDOMServer from 'react-dom/server'
 import { StaticRouter } from 'react-router-dom/server'
-import { App } from './components/app.jsx'
+import { App } from './components/app.js'
 
 export function render(url: string) {
 	return ReactDOMServer.renderToString(

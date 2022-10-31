@@ -11,8 +11,7 @@ processes = []
   VITE_SERVER_URL = "https://fastify-react-ts.fly.dev"
   JWT_SECRET = "random-jwt-secret"
   SECRET = "a secret with minimum length of 32 characters"
-  VITE_GITHUB_URL = "https://github.com/giacomorebonato/fastify-react-ts"
-
+  
 [mounts]
   source="fastify_react_ts_data"
   destination="/data"
