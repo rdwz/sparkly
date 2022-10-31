@@ -1,2 +1,9 @@
 tsconfig.tsbuildinfo
 README.md
+dist
+coverage
+.vscode
+.github
+e2e
+playwright-report
+node_modules

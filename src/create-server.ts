@@ -3,8 +3,8 @@ import middie from '@fastify/middie'
 import fastifySession from '@fastify/session'
 import ws from '@fastify/websocket'
 import {
-	CreateFastifyContextOptions,
-	fastifyTRPCPlugin,
+  CreateFastifyContextOptions,
+  fastifyTRPCPlugin
 } from '@trpc/server/adapters/fastify'
 
 import fastify from 'fastify'
@@ -12,7 +12,6 @@ import fs from 'fs'
 import path from 'path'
 import * as url from 'url'
 import type { ViteDevServer } from 'vite'
-import { createViteServer } from './create-vite-server.js'
 import { env as defaultEnv } from './env.js'
 import * as context from './lib/create-context.js'
 import { appRouter } from './router/index.js'
@@ -64,6 +63,7 @@ export const createServer = async (env = defaultEnv) => {
 	let vite: ViteDevServer
 
 	if (env.NODE_ENV !== 'production') {
+    const { createViteServer } = await import('./create-vite-server.js')
 		vite = await createViteServer()
 		await server.use(vite.middlewares)
 	} else {

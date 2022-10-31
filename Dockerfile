@@ -2,51 +2,28 @@ FROM node:19-bullseye-slim as base
 
 RUN apt-get update && apt-get install -y openssl
 
-ENV NODE_ENV=production
-
-FROM base as deps
+# FROM base as build
 
 RUN mkdir /app
 WORKDIR /app
 
-ADD package.json package-lock.json ./
+ADD . .
 RUN npm install
-
-FROM base as production-deps
-
-RUN mkdir /app
-WORKDIR /app
-
-COPY --from=deps /app/node_modules /app/node_modules
-ADD package.json package-lock.json ./
+RUN npm run build
 RUN npm prune --production
 
-FROM base as build
+# FROM base
 
-RUN mkdir /app
-WORKDIR /app
+# RUN mkdir /app
+# WORKDIR /app
 
-COPY --from=deps /app/node_modules /app/node_modules
+# COPY --from=build /app/node_modules /app/node_modules
+# COPY --from=build /app/dist /app/dist
 
-ADD prisma .
-RUN npx prisma generate
-
-ADD . .
-RUN npm run build
-
-FROM base
-
-ENV NODE_ENV=production
-
-RUN mkdir /app
-WORKDIR /app
-
-COPY --from=production-deps /app/node_modules /app/node_modules
-COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
-COPY --from=build /app/dist /app/dist
-
-ADD . .
+# ADD . .
 
 EXPOSE 3000
+
+ENV NODE_ENV=production
 
 CMD ["./start.sh"]
