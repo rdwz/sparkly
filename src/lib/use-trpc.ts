@@ -22,7 +22,10 @@ export const useTrpc = () => {
 		}
 
 		const wsClient = createWSClient({
-			url: `${serverUrl.replace(/http(s)?/, 'ws')}/trpc`,
+			url: `${serverUrl.replace(
+				window.location.protocol,
+				window.location.protocol === 'https:' ? 'wss:' : 'ws:',
+			)}/trpc`,
 		})
 
 		const links: Array<TRPCLink<any>> = [
