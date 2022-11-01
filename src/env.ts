@@ -4,6 +4,7 @@ import z from 'zod'
 dotenv.config()
 
 const envSchema = z.object({
+	SERVER_URL: z.string().default('http://localhost:3000'),
 	NODE_ENV: z
 		.enum(['production', 'development', 'test'])
 		.default('development'),

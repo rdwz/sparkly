@@ -1,12 +1,11 @@
 import cookie, { FastifyCookieOptions } from '@fastify/cookie'
 import middie from '@fastify/middie'
 import fastifySession from '@fastify/session'
-import ws from '@fastify/websocket'
+import fastifyWebsocket from '@fastify/websocket'
 import {
 	CreateFastifyContextOptions,
 	fastifyTRPCPlugin,
 } from '@trpc/server/adapters/fastify'
-
 import fastify from 'fastify'
 import { env as defaultEnv } from './env.js'
 import { reactSSR } from './fastify-plugins/react-ssr.js'
@@ -28,6 +27,14 @@ const envToLogger = {
 	test: false,
 }
 
+const makeTomorrowDate = () => {
+	const today = new Date()
+	const tomorrow = new Date(today)
+	tomorrow.setDate(tomorrow.getDate() + 1)
+
+	return tomorrow
+}
+
 export const createServer = async (env = defaultEnv) => {
 	const server = fastify({
 		maxParamLength: 5000,
@@ -39,22 +46,17 @@ export const createServer = async (env = defaultEnv) => {
 	}
 
 	await server.register(cookie, fastifyCookieOptions)
-	const today = new Date()
-	const tomorrow = new Date(today)
-	tomorrow.setDate(tomorrow.getDate() + 1)
-
 	await server.register(fastifySession, {
 		cookieName: 'sessionId',
 		secret: env.SECRET,
 		cookie: {
 			secure: env.NODE_ENV === 'production',
-			expires: tomorrow,
+			expires: makeTomorrowDate(),
 		},
 	})
 
 	await server.register(middie)
-
-	await server.register(ws)
+	await server.register(fastifyWebsocket)
 	await server.register(fastifyTRPCPlugin, {
 		useWSS: true,
 		prefix: '/trpc',

@@ -8,9 +8,11 @@ processes = []
 [env]
   NODE_ENV = "production"
   DATABASE_URL = "file:/data/dev.db"
-  VITE_SERVER_URL = "https://fastify-react-ts.fly.dev"
   JWT_SECRET = "random-jwt-secret"
   SECRET = "a secret with minimum length of 32 characters"
+  VITE_GOOGLE_VERIFICATION_ID = "DWJzynK0G_OH0vIHTVF5UF_vQbULL4WNGBRfex92mPs"
+  VITE_SITE_NAME = "fastify-react-ts"
+  SERVER_URL = "https://fastify-react-ts.fly.dev"
   
 [mounts]
   source="fastify_react_ts_data"
